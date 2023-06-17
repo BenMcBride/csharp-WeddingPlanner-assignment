@@ -1,0 +1,32 @@
+@model Wedding
+
+@{
+  #pragma warning disable CS8604
+}
+
+<div class="container">
+  <div>@await Html.PartialAsync("_NavBar")</div>
+</div>
+
+<div class="container mt-3">
+  <h1 class="display-4">@Model.WedderOne & @Model.WedderTwo's wedding</h1>
+  @if (Model.Date != null)
+  {
+      DateTime date = DateTime.Parse(Model.Date.ToString());
+      <h3>Date: @date.ToString("MMMM d yyyy")</h3>
+  }
+  <div class="row">
+    <h5>Guests</h5>
+    <table class="bordered">
+      <tbody>
+        @foreach (var rsvp in Model.AllRsvps)
+        {
+          if (rsvp.User != null)
+          {
+            <tr><td>@rsvp.User.FirstName @rsvp.User.LastName</td></tr>
+          }
+        }
+      </tbody>
+    </table>
+  </div>
+</div>

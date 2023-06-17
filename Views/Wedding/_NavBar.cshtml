@@ -1,0 +1,29 @@
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
+
+@{
+  #pragma warning disable CS8600
+  #pragma warning disable CS8602
+}
+
+@if (HttpContextAccessor.HttpContext.Session.GetString("FirstName") != null)
+{
+  string firstName = HttpContextAccessor.HttpContext.Session.GetString("FirstName");
+  <nav class="navbar bg-body-tertiary">
+    <div class="container-fluid">
+      <h3>Welcome @firstName!</h3>
+      <div class="">
+        <ul class="navbar-nav d-flex flex-row">
+          <li class="nav-item me-3">
+            <a class="nav-link" asp-action="Weddings" asp-controller="Wedding">Home</a>
+            </li>
+          <li class="nav-item me-3">
+            <a class="nav-link" asp-action="NewWedding" asp-controller="Wedding">Plan a Wedding</a>
+            </li>
+          <li class="nav-item me-3">
+            <a class="nav-link" asp-action="Logout" asp-controller="Home">Logout</a>
+            </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+}

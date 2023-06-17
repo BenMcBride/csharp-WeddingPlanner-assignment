@@ -1,0 +1,63 @@
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
+@model List<Wedding>
+@{
+  #pragma warning disable CS8629
+  #pragma warning disable CS8602
+  #pragma warning disable CS8604
+}
+
+<div class="container">
+  <div>@await Html.PartialAsync("_NavBar")</div>
+</div>
+
+<div class="text-center">
+  <div class="container mt-3">
+    <h1 class="display-4">All Weddings</h1>
+    <table class="table border rounded">
+      <thead>
+        <th scope="col">Wedding of</th>
+        <th scope="col">Date</th>
+        <th scope="col">Guest Count</th>
+        <th scope="col">Action</th>
+      </thead>
+      <tbody>
+        @foreach (Wedding wedding in Model)
+        {
+          <tr>
+            <td><a href="weddings/@wedding.WeddingId">@wedding.WedderOne & @wedding.WedderTwo</a></td> 
+            @if (wedding.Date != null)
+            {
+              DateTime date = DateTime.Parse(wedding.Date.ToString());
+              <td>@date.ToString("MMMM d yyyy")</td>
+            }
+            <td>@wedding.AllRsvps.Count</td>
+            <td>
+              @if (HttpContextAccessor.HttpContext.Session.GetInt32("UserId") != null)
+              {
+                int userId = HttpContextAccessor.HttpContext.Session.GetInt32("UserId").Value;
+                if (wedding.Creator.UserId == userId)
+                {
+                  <form method="post" action="weddings/@wedding.WeddingId/destroy" onsubmit="return confirm('Are you sure you want to delete this wedding?');">
+                    <button type="submit" class="btn btn-danger">Destroy</button>
+                  </form>
+                }
+                else
+                {
+                  bool hasRsvp = wedding.AllRsvps.Any(r => r.UserId == userId);
+                  if (!hasRsvp)
+                  {
+                    <a href="weddings/@wedding.WeddingId/rsvp">RSVP</a>
+                  }
+                  else
+                  {
+                    <a href="weddings/@wedding.WeddingId/rsvp/remove">Un-RSVP</a>
+                  }
+                }
+              }
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</div>
