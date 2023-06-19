@@ -30,7 +30,7 @@ public class User
   [NotMapped]
   [Compare("Password")]
   public string ConfirmPassword { get; set; }
-  public List<RSVP> AllRsvps { get; set; } = new List<RSVP>();
+  public List<RSVP> AllRsvps { get; set; } = new List<RSVP>(); // not always necessary.
 }
 public class UniqueEmailAttribute : ValidationAttribute
 {

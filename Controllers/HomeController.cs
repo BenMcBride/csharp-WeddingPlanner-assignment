@@ -84,6 +84,7 @@ public class HomeController : Controller
     return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
   }
 }
+// define session check in controller you're using it in.
 public class SessionCheckAttribute : ActionFilterAttribute
 {
   public override void OnActionExecuting(ActionExecutingContext context)

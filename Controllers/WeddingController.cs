@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using WeddingPlanner.Models;
 
 namespace WeddingPlanner.Controllers;
-
+[SessionCheck]
 public class WeddingController : Controller
 {
   private readonly ILogger<WeddingController> _logger;
@@ -20,7 +20,6 @@ public class WeddingController : Controller
     db = context;
   }
 
-  [SessionCheck]
   [HttpGet("weddings")]
   public IActionResult Weddings()
   {
@@ -32,30 +31,21 @@ public class WeddingController : Controller
     return View("Weddings", allWeddings);
   }
 
-  [SessionCheck]
   [HttpGet("weddings/{WeddingId}/rsvp")]
   public IActionResult Rsvp(int weddingId)
   {
     int? userId = HttpContext.Session.GetInt32("UserId");
-    if (userId == null)
-    {
-      return View("Weddings");
-    }
     Wedding? wedding = db.Weddings
       .Include(w => w.AllRsvps)
       .FirstOrDefault(r => r.WeddingId == weddingId);
-    if (wedding == null)
-    {
-      return RedirectToAction("Weddings");
-    }
     User? user = db.Users.FirstOrDefault(w => w.UserId == userId);
-    if (user == null)
+    if (user == null || wedding == null)
     {
       return View("Weddings");
     }
-    if (user.AllRsvps.Any(r => r.WeddingId == weddingId))
+    if (user.AllRsvps.Any(r => r.WeddingId == weddingId)) // check if they're already RSVP'd
     {
-      return RedirectToAction("Weddings");
+      return RedirectToAction("Weddings"); // handle RSVP removes here
     }
     RSVP newRsvp = new RSVP
     {
@@ -67,29 +57,16 @@ public class WeddingController : Controller
     return RedirectToAction("Weddings");
   }
 
-  [SessionCheck]
   [HttpGet("weddings/{WeddingId}/rsvp/remove")]
   public IActionResult RemoveRsvp(int weddingId)
   {
     int? userId = HttpContext.Session.GetInt32("UserId");
-    if (userId == null)
-    {
-      return RedirectToAction("Weddings");
-    }
     Wedding? wedding = db.Weddings
         .Include(w => w.AllRsvps)
         .FirstOrDefault(w => w.WeddingId == weddingId);
-    if (wedding == null)
-    {
-      return RedirectToAction("Weddings");
-    }
     User? user = db.Users.FirstOrDefault(u => u.UserId == userId);
-    if (user == null)
-    {
-      return RedirectToAction("Weddings");
-    }
     RSVP? rsvpToRemove = wedding.AllRsvps.FirstOrDefault(r => r.UserId == userId);
-    if (rsvpToRemove == null)
+    if (rsvpToRemove == null || user == null || wedding == null)
     {
       return RedirectToAction("Weddings");
     }
@@ -99,7 +76,6 @@ public class WeddingController : Controller
   }
 
   // redirect to New.cshtml
-  [SessionCheck]
   [HttpGet("weddings/new")]
   public IActionResult NewWedding()
   {
@@ -107,7 +83,6 @@ public class WeddingController : Controller
   }
 
   // Create new wedding
-  [SessionCheck]
   [HttpPost("weddings/create")]
   public IActionResult CreateWedding(Wedding wedding)
   {
@@ -123,7 +98,6 @@ public class WeddingController : Controller
   }
 
   // Get one Wedding
-  [SessionCheck]
   [HttpGet("weddings/{WeddingId}")]
   public IActionResult ShowWedding(int WeddingId)
   {
@@ -140,7 +114,6 @@ public class WeddingController : Controller
   }
 
   // Delete the Wedding
-  [SessionCheck]
   [HttpPost("weddings/{WeddingId}/destroy")]
   public IActionResult DestroyWedding(int WeddingId)
   {

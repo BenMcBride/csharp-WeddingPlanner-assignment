@@ -13,6 +13,7 @@ public class Wedding
   [MinLength(2, ErrorMessage = "must be at least 2 characters.")]
   [MaxLength(30, ErrorMessage = "must be at most 30 characters.")]
   public string WedderTwo { get; set; }
+  [Required]
   [DisplayFormat(DataFormatString = "{0:MMMM d, yyyy}")]
   [FutureDate(ErrorMessage = "Date must be in the future.")]
   public DateTime? Date { get; set; }
