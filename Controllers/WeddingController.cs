@@ -75,7 +75,7 @@ public class WeddingController : Controller
     return RedirectToAction("Weddings");
   }
 
-  // redirect to New.cshtml
+  // redirect to NewWedding.cshtml
   [HttpGet("weddings/new")]
   public IActionResult NewWedding()
   {
